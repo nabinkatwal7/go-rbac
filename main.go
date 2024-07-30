@@ -19,21 +19,36 @@ func serveApplication() {
 	authRoutes.POST("/login", controller.Login)
 
 	adminRoutes := router.Group("/admin")
+	adminRoutes.Use(utils.JWTAuth())
 	adminRoutes.GET("/users", controller.GetUsers)
-	adminRoutes.GET("/users/:id", controller.GetUser)
-	adminRoutes.PUT("/users/:id", controller.UpdateUser)
+	adminRoutes.GET("/user/:id", controller.GetUser)
+	adminRoutes.PUT("/user/:id", controller.UpdateUser)
 	adminRoutes.POST("/user/role", controller.CreateRole)
 	adminRoutes.GET("/user/roles", controller.GetRoles)
 	adminRoutes.PUT("/user/role/:id", controller.UpdateRole)
+	adminRoutes.POST("/room/add", controller.CreateRoom)
+	adminRoutes.PUT("/room/:id", controller.UpdateRoom)
+	adminRoutes.GET("/room/bookings", controller.GetBookings)
 
-	router.Run(":8080")
-	fmt.Println("Server is running on port 8080")
+	publicRoutes := router.Group("/api/view")
+	publicRoutes.GET("/rooms", controller.GetRooms)
+	publicRoutes.GET("/room/:id", controller.GetRoom)
+
+	protectedRoutes := router.Group("/api")
+	protectedRoutes.Use(utils.JWTAuthCustomer())
+	protectedRoutes.GET("/rooms/booked", controller.GetUserBookings)
+	protectedRoutes.POST("/room/book", controller.CreateBooking)
+
+	router.Run(":8000")
+	fmt.Println("Server running on port 8000")
 }
 
 func loadDatabase() {
 	db.Connect()
 	db.Database.AutoMigrate(&model.User{})
 	db.Database.AutoMigrate(&model.Role{})
+	db.Database.AutoMigrate(&model.Room{})
+	db.Database.AutoMigrate(&model.Booking{})
 
 	seedData()
 }
