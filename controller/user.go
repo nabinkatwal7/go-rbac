@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/nabinkatwal7/go-rbac/model"
+	"github.com/nabinkatwal7/go-rbac/utils"
 	"gorm.io/gorm"
 )
 
@@ -66,7 +67,14 @@ func Login(context *gin.Context) {
 		return
 	}
 
+	jwt, err := utils.GenerateJWT(user)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	context.JSON(http.StatusOK, gin.H{
+		"token":    jwt,
 		"username": input.Username,
 		"message":  "Login Successful",
 	})

@@ -18,6 +18,14 @@ func serveApplication() {
 	authRoutes.POST("/register", controller.Register)
 	authRoutes.POST("/login", controller.Login)
 
+	adminRoutes := router.Group("/admin")
+	adminRoutes.GET("/users", controller.GetUsers)
+	adminRoutes.GET("/users/:id", controller.GetUser)
+	adminRoutes.PUT("/users/:id", controller.UpdateUser)
+	adminRoutes.POST("/user/role", controller.CreateRole)
+	adminRoutes.GET("/user/roles", controller.GetRoles)
+	adminRoutes.PUT("/user/role/:id", controller.UpdateRole)
+
 	router.Run(":8080")
 	fmt.Println("Server is running on port 8080")
 }
@@ -42,4 +50,3 @@ func main() {
 	loadDatabase()
 	serveApplication()
 }
-
