@@ -11,15 +11,15 @@ import (
 
 type User struct {
 	gorm.Model
-	ID uint `gorm:"primaryKey"`
-	RoleID uint `gorm:"not null;default:3" json:"role_id"`
+	ID       uint   `gorm:"primaryKey"`
+	RoleID   uint   `gorm:"not null;default:3" json:"role_id"`
 	Username string `gorm:"size:255;not null;unique" json:"username"`
-	Email string `gorm:"size:255;not null;unique" json:"email"`
+	Email    string `gorm:"size:255;not null;unique" json:"email"`
 	Password string `gorm:"size:255; not null" json:"-"`
-	Role Role `gorm:"constraing:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	Role     Role   `gorm:"constraing:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
 }
 
-func (user *User) Save() (*User, error){
+func (user *User) Save() (*User, error) {
 	err := db.Database.Create(&user).Error
 	if err != nil {
 		return &User{}, err
@@ -39,9 +39,9 @@ func (user *User) BeforeSave(*gorm.DB) error {
 	return nil
 }
 
-func GetUsers(User *[]User) (err error){
+func GetUsers(User *[]User) (err error) {
 	err = db.Database.Find(&User).Error
-	
+
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func GetUsers(User *[]User) (err error){
 	return nil
 }
 
-func GetUserByUsername (username string)(User, error){
+func GetUserByUsername(username string) (User, error) {
 	var user User
 	err := db.Database.Where("username = ?", username).Find(&user).Error
 
@@ -59,7 +59,11 @@ func GetUserByUsername (username string)(User, error){
 	return user, nil
 }
 
-func GetUserByID(id uint) (User, error){
+func (user *User) ValidateUserPassword(password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+}
+
+func GetUserByID(id uint) (User, error) {
 	var user User
 
 	err := db.Database.Where("id = ?", id).Find(&user).Error
@@ -69,7 +73,7 @@ func GetUserByID(id uint) (User, error){
 	return user, nil
 }
 
-func GetUser (User *User, id int) (err error){
+func GetUser(User *User, id int) (err error) {
 	err = db.Database.Where("id = ?", id).First(&User).Error
 
 	if err != nil {
@@ -79,7 +83,7 @@ func GetUser (User *User, id int) (err error){
 	return nil
 }
 
-func UpdateUser(User *User) (err error){
+func UpdateUser(User *User) (err error) {
 	err = db.Database.Omit("password").Updates(User).Error
 
 	if err != nil {
@@ -87,3 +91,4 @@ func UpdateUser(User *User) (err error){
 	}
 	return nil
 }
+
