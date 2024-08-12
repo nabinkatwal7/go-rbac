@@ -91,4 +91,3 @@ func UpdateUser(User *User) (err error) {
 	}
 	return nil
 }
-

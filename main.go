@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/nabinkatwal7/go-rbac/controller"
 	"github.com/nabinkatwal7/go-rbac/db"
@@ -15,9 +14,9 @@ import (
 func serveApplication() {
 	router := gin.Default()
 
-	config := cors.DefaultConfig()
-	//config.AllowOrigins = []string{"http://localhost:4200"}
-	router.Use(cors.New(config))
+	// config := cors.DefaultConfig()
+	// config.AllowOrigins = []string{"http://localhost:8080"}
+	// router.Use(cors.New(config))
 
 	authRoutes := router.Group("/auth/user")
 	authRoutes.POST("/register", controller.Register)

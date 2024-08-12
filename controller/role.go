@@ -80,4 +80,3 @@ func UpdateRole(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, Role)
 }
-
